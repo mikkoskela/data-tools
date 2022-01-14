@@ -1,0 +1,19 @@
+# Analytics
+ipython==8.0.0
+scipy
+numpy
+pandas
+matplotlib
+seaborn
+jupyterlab
+retrolab
+
+# Cloud SDKs
+boto3
+google-cloud-bigquery
+google-cloud-storage
+
+# Development
+black
+isort
+flake8
