@@ -1,0 +1,42 @@
+name: Update image on GHCR
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }} # <account>/<repository>
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Log in to the Github Container Registry # https://github.com/docker/login-action
+      uses: docker/login-action@v1.12.0
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata for the image # https://github.com/docker/metadata-action
+      id: meta
+      uses: docker/metadata-action@v3.6.2
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+    - name: Build and push Docker image # https://github.com/docker/build-push-action
+      uses: docker/build-push-action@v2.7.0
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
